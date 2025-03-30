@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat PHP</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+
+</head>
+    <body>
+
+        <main>
+
+            <div class="zawartosc">
+
+                <div id="chatbox">
+                    <ul id="messages"></ul>
+                </div>
+    
+                <div class="skibidi"> 
+                    <input type="text" id="message" placeholder="Wpisz wiadomość...">
+            
+                    <button onclick="sendMessage()">Wyślij</button>
+                </div>
+
+            </div>
+
+            <script>
+                function loadMessages() {
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("POST", "load_messages.php", true);
+                    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState === 4 && xhr.status === 200) {
+                            document.getElementById("messages").innerHTML = xhr.responseText;
+                        }
+                    };
+                    xhr.send();
+                }
+    
+                function sendMessage() {
+                    var msg = document.getElementById("message").value;
+                    if (msg.trim() === "") return;
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("POST", "send_message.php", true);
+                    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState === 4 && xhr.status === 200) {
+                            document.getElementById("message").value = "";
+                            loadMessages();
+                        }
+                    };
+                    xhr.send("message=" + encodeURIComponent(msg));
+                }
+    
+                setInterval(loadMessages, 2000);
+                loadMessages();
+            </script>
+
+        </main>
+        
+    </body>
+</html>
